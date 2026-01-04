@@ -169,33 +169,112 @@ th { font-weight: 500; color: var(--muted); }
       <h3>API 端点</h3>
       <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem">支持 OpenAI、Anthropic、Gemini 三种协议</p>
       <h4 style="color:var(--muted);margin-bottom:0.5rem">OpenAI 协议 (Codex CLI)</h4>
-      <div class="endpoint"><span class="method post">POST</span><code>/v1/chat/completions</code></div>
-      <div class="endpoint"><span class="method get">GET</span><code>/v1/models</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/v1/chat/completions</code><button class="copy-btn" onclick="copy('/v1/chat/completions')">复制</button></div>
+      <div class="endpoint"><span class="method get">GET</span><code>/v1/models</code><button class="copy-btn" onclick="copy('/v1/models')">复制</button></div>
       <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Anthropic 协议 (Claude Code CLI)</h4>
-      <div class="endpoint"><span class="method post">POST</span><code>/v1/messages</code></div>
+      <div class="endpoint"><span class="method post">POST</span><code>/v1/messages</code><button class="copy-btn" onclick="copy('/v1/messages')">复制</button></div>
       <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Gemini 协议</h4>
       <div class="endpoint"><span class="method post">POST</span><code>/v1/models/{model}:generateContent</code></div>
       <h4 style="margin-top:1rem;color:var(--muted)">Base URL</h4>
       <pre><code id="baseUrl"></code></pre>
+      <button class="copy-btn" onclick="copy(location.origin)" style="margin-top:0.5rem">复制 Base URL</button>
+    </div>
+    <div class="card">
+      <h3>cc-switch 配置</h3>
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem">在 cc-switch 中添加自定义供应商：</p>
+      <h4 style="color:var(--muted);margin-bottom:0.5rem">Claude Code 配置</h4>
+      <pre><code>名称: Kiro Proxy
+API Key: any-key-works
+Base URL: <span class="pyUrl"></span>
+模型: claude-sonnet-4</code></pre>
+      <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Codex 配置</h4>
+      <pre><code>名称: Kiro Proxy
+API Key: any-key-works
+Endpoint: <span class="pyUrl"></span>/v1
+模型: claude-sonnet-4</code></pre>
+      <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Gemini CLI 配置</h4>
+      <pre><code>名称: Kiro Proxy
+API Key: any-key-works
+Base URL: <span class="pyUrl"></span>
+模型: gemini-2.0-flash</code></pre>
     </div>
     <div class="card">
       <h3>cURL 示例</h3>
+      <h4 style="color:var(--muted);margin-bottom:0.5rem">OpenAI 格式</h4>
       <pre><code>curl <span class="pyUrl"></span>/v1/chat/completions \\
   -H "Content-Type: application/json" \\
   -d '{"model": "claude-sonnet-4", "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+      <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Anthropic 格式</h4>
+      <pre><code>curl <span class="pyUrl"></span>/v1/messages \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: any-key" \\
+  -H "anthropic-version: 2023-06-01" \\
+  -d '{"model": "claude-sonnet-4", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+    </div>
+    <div class="card">
+      <h3>Python 示例</h3>
+      <h4 style="color:var(--muted);margin-bottom:0.5rem">OpenAI SDK</h4>
+      <pre><code>from openai import OpenAI
+
+client = OpenAI(base_url="<span class="pyUrl"></span>/v1", api_key="not-needed")
+response = client.chat.completions.create(
+    model="claude-sonnet-4",
+    messages=[{"role": "user", "content": "Hello"}]
+)
+print(response.choices[0].message.content)</code></pre>
+      <h4 style="color:var(--muted);margin-top:1rem;margin-bottom:0.5rem">Anthropic SDK</h4>
+      <pre><code>from anthropic import Anthropic
+
+client = Anthropic(base_url="<span class="pyUrl"></span>", api_key="not-needed")
+response = client.messages.create(
+    model="claude-sonnet-4",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}]
+)
+print(response.content[0].text)</code></pre>
     </div>
   </div>
   
   <div class="panel" id="docs">
     <div class="card">
       <h3>模型对照表</h3>
+      <p style="color:var(--muted);margin-bottom:1rem;font-size:0.875rem">在 cc-switch 中配置时，根据想使用的 Kiro 模型填写对应的模型名称</p>
       <table>
-        <thead><tr><th>Kiro 模型</th><th>能力</th><th>Claude Code</th><th>Codex</th></tr></thead>
+        <thead><tr><th>Kiro 模型</th><th>能力</th><th>Claude Code</th><th>Codex</th><th>Gemini CLI</th></tr></thead>
         <tbody>
-          <tr><td><code>claude-sonnet-4</code></td><td>⭐⭐⭐ 推荐</td><td><code>claude-sonnet-4</code></td><td><code>gpt-4o</code></td></tr>
-          <tr><td><code>claude-sonnet-4.5</code></td><td>⭐⭐⭐⭐ 更强</td><td><code>claude-sonnet-4.5</code></td><td><code>gpt-4o</code></td></tr>
-          <tr><td><code>claude-haiku-4.5</code></td><td>⚡ 快速</td><td><code>claude-haiku-4.5</code></td><td><code>gpt-4o-mini</code></td></tr>
-          <tr><td><code>claude-opus-4.5</code></td><td>⭐⭐⭐⭐⭐ 最强</td><td><code>claude-opus-4.5</code></td><td><code>o1</code></td></tr>
+          <tr><td><code>claude-sonnet-4</code></td><td>⭐⭐⭐ 推荐</td><td><code>claude-sonnet-4</code></td><td><code>gpt-4o</code></td><td><code>gemini-2.0-flash</code></td></tr>
+          <tr><td><code>claude-sonnet-4.5</code></td><td>⭐⭐⭐⭐ 更强</td><td><code>claude-sonnet-4.5</code></td><td><code>gpt-4o</code></td><td><code>gemini-1.5-pro</code></td></tr>
+          <tr><td><code>claude-haiku-4.5</code></td><td>⚡ 快速</td><td><code>claude-haiku-4.5</code></td><td><code>gpt-4o-mini</code></td><td><code>gemini-1.5-flash</code></td></tr>
+          <tr><td><code>claude-opus-4.5</code></td><td>⭐⭐⭐⭐⭐ 最强</td><td><code>claude-opus-4.5</code></td><td><code>o1</code></td><td><code>gemini-2.0-flash-thinking</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>自动模型映射</h3>
+      <p style="color:var(--muted);margin-bottom:1rem;font-size:0.875rem">CLI 发送的模型名会自动映射到 Kiro 支持的模型</p>
+      <table style="font-size:0.8rem">
+        <thead><tr><th>CLI 发送</th><th>映射到 Kiro</th></tr></thead>
+        <tbody>
+          <tr><td><code>claude-3-5-sonnet-*</code></td><td><code>claude-sonnet-4</code></td></tr>
+          <tr><td><code>claude-3-opus-*</code></td><td><code>claude-opus-4.5</code></td></tr>
+          <tr><td><code>gpt-4o</code> / <code>gpt-4-turbo</code></td><td><code>claude-sonnet-4</code></td></tr>
+          <tr><td><code>gpt-4o-mini</code> / <code>gpt-3.5-turbo</code></td><td><code>claude-haiku-4.5</code></td></tr>
+          <tr><td><code>o1</code> / <code>o1-preview</code></td><td><code>claude-opus-4.5</code></td></tr>
+          <tr><td><code>gemini-2.0-flash</code> / <code>gemini-1.5-flash</code></td><td><code>claude-sonnet-4</code></td></tr>
+          <tr><td><code>gemini-1.5-pro</code></td><td><code>claude-sonnet-4.5</code></td></tr>
+          <tr><td><code>gemini-2.0-flash-thinking</code></td><td><code>claude-opus-4.5</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>API 端点说明</h3>
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem">支持三种协议：OpenAI / Anthropic / Gemini</p>
+      <table style="font-size:0.8rem">
+        <thead><tr><th>协议</th><th>端点</th><th>用于</th></tr></thead>
+        <tbody>
+          <tr><td>OpenAI</td><td><code>/v1/chat/completions</code></td><td>Codex CLI</td></tr>
+          <tr><td>Anthropic</td><td><code>/v1/messages</code></td><td>Claude Code CLI (支持工具调用)</td></tr>
+          <tr><td>Gemini</td><td><code>/v1/models/{model}:generateContent</code></td><td>Gemini CLI</td></tr>
         </tbody>
       </table>
     </div>
@@ -207,6 +286,17 @@ th { font-weight: 500; color: var(--muted); }
 <script>
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
+
+// Copy function
+function copy(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const toast=document.createElement('div');
+    toast.textContent='已复制';
+    toast.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);padding:0.5rem 1rem;border-radius:6px;font-size:0.875rem;z-index:1000';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),1500);
+  });
+}
 
 // Tabs
 $$('.tab').forEach(t=>t.onclick=()=>{
